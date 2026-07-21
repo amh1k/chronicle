@@ -19,4 +19,16 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     },
   },
+  advanced: {
+    cookiePrefix: "chronicle",
+    crossSubDomainCookies: {
+      enabled: true,
+      domain: "app.example.com",
+    },
+    trustedOrigins: [
+      "https://example.com",
+      "https://app1.example.com",
+      "https://app2.example.com",
+    ],
+  },
 });
