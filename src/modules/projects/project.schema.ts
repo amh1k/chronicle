@@ -1,8 +1,8 @@
 import * as z from "zod";
 
-const ProjectCreationSchema = z.object({
+export const ProjectCreationSchema = z.object({
   ownerId: z.string(),
-  respositoryFullName: z
+  repositoryFullName: z
     .string()
     .min(1, "Repository name is required")
     .max(100, "Repository name is too long")
@@ -14,7 +14,8 @@ const ProjectCreationSchema = z.object({
 
   visibility: z.enum(["PUBLIC", "PRIVATE"]),
 });
+export type CreateProjectInput = z.infer<typeof ProjectCreationSchema>;
 
-const ProjectDeletionSchema = z.object({
+export const ProjectDeletionSchema = z.object({
   id: z.object(),
 });
