@@ -13,11 +13,11 @@ const verifySession: MiddlewareFunction = async (
     if (!sessionToken) {
       throw new ApiError(401, "unauthorized");
     }
-    const sessionWithUser: any = await getUserFromSessionToken(sessionToken);
+    const sessionWithUser = await getUserFromSessionToken(sessionToken);
     if (!sessionWithUser) {
       throw new ApiError(401, "Session token not found");
     }
-    req.user = sessionWithUser.User;
+    req.user = sessionWithUser.user;
     next();
   } catch (error) {
     if (error instanceof Error) {

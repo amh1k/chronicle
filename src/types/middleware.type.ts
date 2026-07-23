@@ -5,3 +5,4 @@ export type MiddlewareFunction = (
   res: Response,
   next: NextFunction,
 ) => any;
+

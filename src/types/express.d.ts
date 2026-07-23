@@ -1,9 +1,9 @@
-interface TempUser {}
+import type { User } from "./user.type.js";
 
 declare global {
   namespace Express {
     interface Request {
-      user?: TempUser;
+      user?: User;
     }
   }
 }
