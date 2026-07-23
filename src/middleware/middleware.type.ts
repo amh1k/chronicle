@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 
 export type MiddlewareFunction = (
   req: Request,
   res: Response,
   next: NextFunction,
-) => any;
+) => void | Promise<void>;
 

@@ -18,6 +18,9 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  githubInstallations GitHubInstallation[]
+  projects      Project[]
+  runs          Run[]
 
   @@map("user")
 }
@@ -68,4 +71,137 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model GitHubInstallation {
+  id             String   @id
+  userId         String
+  installationId BigInt   @unique
+  accountLogin   String?
+  suspendedAt    DateTime?
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("github_installations")
+}
+
+model Project {
+  id                   String   @id
+  ownerId              String
+  repositoryFullName   String
+  defaultBranch        String
+  visibility           String
+  owner                User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  environmentSpecs     EnvironmentSpec[]
+  scenarios            Scenario[]
+  runs                 Run[]
+
+  @@index([ownerId])
+  @@index([repositoryFullName])
+  @@map("projects")
+}
+
+model EnvironmentSpec {
+  id             String   @id
+  projectId      String
+  version        Int
+  objectKey      String
+  schemaVersion  Int
+  checksum       String
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, version])
+  @@index([projectId])
+  @@map("environment_specs")
+}
+
+model Scenario {
+  id          String   @id
+  projectId   String
+  name        String
+  type        String
+  version     Int
+  objectKey   String
+  checksum    String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, name, version])
+  @@index([projectId])
+  @@map("scenarios")
+}
+
+model Run {
+  id               String   @id
+  projectId        String
+  requestedCommit  String?
+  resolvedCommit   String?
+  status           String
+  requestedById    String
+  createdAt        DateTime @default(now())
+  project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  requestedBy      User     @relation(fields: [requestedById], references: [id], onDelete: Cascade)
+  attempts         RunAttempt[]
+
+  @@index([projectId, status, createdAt])
+  @@index([resolvedCommit])
+  @@index([requestedById])
+  @@map("runs")
+}
+
+model RunAttempt {
+  id              String   @id
+  runId           String
+  runnerId        String?
+  leaseToken      String   @unique
+  leaseExpiresAt  DateTime?
+  status          String
+  startedAt       DateTime?
+  endedAt         DateTime?
+  run             Run      @relation(fields: [runId], references: [id], onDelete: Cascade)
+  runner          RunnerNode? @relation(fields: [runnerId], references: [id], onDelete: SetNull)
+  artifacts       Artifact[]
+
+  @@index([runId])
+  @@index([leaseExpiresAt])
+  @@index([runnerId])
+  @@map("run_attempts")
+}
+
+model RunnerNode {
+  id               String   @id
+  name             String
+  runtimeVersion   String
+  capacity         Int
+  lastHeartbeatAt  DateTime
+  draining         Boolean  @default(false)
+  attempts         RunAttempt[]
+
+  @@index([lastHeartbeatAt])
+  @@map("runner_nodes")
+}
+
+model Artifact {
+  id            String   @id
+  attemptId     String
+  kind          String
+  objectKey     String
+  sizeBytes     BigInt
+  sha256        String
+  contentType   String
+  attempt       RunAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([attemptId, kind])
+  @@map("artifacts")
+}
+
+model Outbox {
+  id            String    @id
+  aggregateType String
+  aggregateId   String
+  eventType     String
+  payload       Json
+  publishedAt   DateTime?
+
+  @@index([publishedAt], map: "outbox_published_at_idx")
+  @@map("outbox")
 }

@@ -1,4 +1,4 @@
-import { MiddlewareFunction } from "../types/middleware.type";
+import { MiddlewareFunction } from "./middleware.type.js";
 import { Request, Response, NextFunction } from "express";
 import { ApiError } from "../utils/apiError";
 import { getUserFromSessionToken } from "../modules/users/user.service.js";
