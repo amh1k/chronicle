@@ -1,6 +1,7 @@
 import { prisma } from "../../lib/prisma";
 import { ApiError } from "../../utils/apiError";
 import { CreateProjectInput, DeleteProjectInput } from "./project.schema";
+import { showAllProjectsForUser } from "./project.controller";
 
 export const createProjectService = async (
   input: CreateProjectInput,
@@ -33,4 +34,46 @@ export const deleteProjectService = async (input: DeleteProjectInput) => {
   } catch (err) {
     throw new ApiError(500, "Failed to delete project");
   }
+};
+
+export const showAllProjectsForUserService = async (
+  userId: string,
+  options = {},
+) => {
+  const { limit = 20, page = 1 } = options as any;
+
+  return await prisma.project.findMany({
+    where: {
+      ownerId: userId,
+    },
+    // include: {
+
+    //   runs: {
+    //     take: 3,
+    //     orderBy: { createdAt: "desc" },
+    //     select: { id: true, status: true, createdAt: true },
+    //   },
+    // },
+    skip: (page - 1) * limit,
+    take: limit,
+  });
+};
+export const showProjectService = async (projectId: string) => {
+  return await prisma.project.findUnique({
+    where: {
+      id: projectId,
+    },
+    include: {
+      runs: {
+        take: 3,
+        orderBy: { createdAt: "desc" },
+      },
+      environmentSpecs: {
+        take: 3,
+      },
+      scenarios: {
+        take: 3,
+      },
+    },
+  });
 };

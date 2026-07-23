@@ -5,7 +5,10 @@ export const ProjectCreationSchema = z.object({
     .string()
     .min(1, "Repository name is required")
     .max(100, "Repository name is too long")
-    .regex(/^(?!\.)(?!.*\.$)[A-Za-z0-9._-]+$/, "Invalid repository name"),
+    .regex(
+      /^(?!\.)(?!.*\.$)[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/,
+      "Invalid repository name",
+    ),
   defaultBranch: z
     .string()
     .min(1, "Default branch is required")
