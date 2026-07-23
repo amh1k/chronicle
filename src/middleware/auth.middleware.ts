@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { ApiError } from "../utils/apiError";
 import { getUserFromSessionToken } from "../modules/users/user.service.js";
 import { User } from "../../generated/prisma/browser";
-const verifySession: MiddlewareFunction = async (
+export const verifySession: MiddlewareFunction = async (
   req: Request,
   res: Response,
   next: NextFunction,

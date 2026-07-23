@@ -18,15 +18,15 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
-  githubInstallations GitHubInstallation[]
-  projects      Project[]
-  runs          Run[]
+  githubInstallations   GitHubInstallation[]
+  projects              Project[]
+  runs                  Run[]
 
   @@map("user")
 }
 
 model Session {
-  id        String   @id
+  id        String   @id @default(cuid())
   expiresAt DateTime
   token     String
   createdAt DateTime @default(now())
@@ -42,7 +42,7 @@ model Session {
 }
 
 model Account {
-  id                    String    @id
+  id                    String    @id @default(cuid())
   accountId             String
   providerId            String
   userId                String
@@ -62,7 +62,7 @@ model Account {
 }
 
 model Verification {
-  id         String   @id
+  id         String   @id @default(cuid())
   identifier String
   value      String
   expiresAt  DateTime
@@ -74,7 +74,7 @@ model Verification {
 }
 
 model GitHubInstallation {
-  id             String   @id
+  id             String   @id @default(cuid())
   userId         String
   installationId BigInt   @unique
   accountLogin   String?
@@ -86,7 +86,7 @@ model GitHubInstallation {
 }
 
 model Project {
-  id                   String   @id
+  id                   String   @id @default(cuid())
   ownerId              String
   repositoryFullName   String
   defaultBranch        String
@@ -102,7 +102,7 @@ model Project {
 }
 
 model EnvironmentSpec {
-  id             String   @id
+  id             String   @id @default(cuid())
   projectId      String
   version        Int
   objectKey      String
@@ -116,7 +116,7 @@ model EnvironmentSpec {
 }
 
 model Scenario {
-  id          String   @id
+  id          String   @id @default(cuid())
   projectId   String
   name        String
   type        String
@@ -131,7 +131,7 @@ model Scenario {
 }
 
 model Run {
-  id               String   @id
+  id               String   @id @default(cuid())
   projectId        String
   requestedCommit  String?
   resolvedCommit   String?
@@ -149,7 +149,7 @@ model Run {
 }
 
 model RunAttempt {
-  id              String   @id
+  id              String   @id @default(cuid())
   runId           String
   runnerId        String?
   leaseToken      String   @unique
@@ -168,7 +168,7 @@ model RunAttempt {
 }
 
 model RunnerNode {
-  id               String   @id
+  id               String   @id @default(cuid())
   name             String
   runtimeVersion   String
   capacity         Int
@@ -181,7 +181,7 @@ model RunnerNode {
 }
 
 model Artifact {
-  id            String   @id
+  id            String   @id @default(cuid())
   attemptId     String
   kind          String
   objectKey     String
@@ -195,7 +195,7 @@ model Artifact {
 }
 
 model Outbox {
-  id            String    @id
+  id            String    @id @default(cuid())
   aggregateType String
   aggregateId   String
   eventType     String
