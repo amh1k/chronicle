@@ -1,7 +1,6 @@
 import * as z from "zod";
 
 export const ProjectCreationSchema = z.object({
-  ownerId: z.string(),
   repositoryFullName: z
     .string()
     .min(1, "Repository name is required")
@@ -17,5 +16,6 @@ export const ProjectCreationSchema = z.object({
 export type CreateProjectInput = z.infer<typeof ProjectCreationSchema>;
 
 export const ProjectDeletionSchema = z.object({
-  id: z.object(),
+  id: z.string(),
 });
+export type DeleteProjectInput = z.infer<typeof ProjectDeletionSchema>;

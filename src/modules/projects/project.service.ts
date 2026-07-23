@@ -1,25 +1,36 @@
 import { prisma } from "../../lib/prisma";
 import { ApiError } from "../../utils/apiError";
-import { CreateProjectInput } from "./project.schema";
+import { CreateProjectInput, DeleteProjectInput } from "./project.schema";
 
-export const createProjectService = async (input: CreateProjectInput) => {
+export const createProjectService = async (
+  input: CreateProjectInput,
+  ownerId: string,
+) => {
   try {
-    const result = await prisma.project.create({
+    return await prisma.project.create({
       data: {
-        ownerId: input.ownerId,
+        ownerId: ownerId,
         repositoryFullName: input.repositoryFullName,
         defaultBranch: input.defaultBranch,
         visibility: input.visibility,
       },
     });
-    return result;
   } catch (err) {
     if (err instanceof Error) {
-      throw new ApiError(400, err?.message);
-    } else {
-      throw new ApiError(400, "Project creation failed for unknown reason");
+      throw new ApiError(400, err.message);
     }
+    throw new ApiError(400, "Project creation failed");
   }
 };
 
-export const deleteProjectService = async () => {};
+export const deleteProjectService = async (input: DeleteProjectInput) => {
+  try {
+    return await prisma.project.delete({
+      where: {
+        id: input.id,
+      },
+    });
+  } catch (err) {
+    throw new ApiError(500, "Failed to delete project");
+  }
+};
